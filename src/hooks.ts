@@ -14,8 +14,7 @@ export function useStore<
 
     function use() : TState;
     function use<R>(selector : (state : TState) => R) : R;
-    // @ts-ignore
-    function use<R = TState>(selector : (state : TState) => R = (state : TState) => state) {
+    function use(selector : (state : TState) => any = (state : TState) => state) {
         const [local, setLocal] = useState(selector(get()));
 
         useEffect(() => subscribe(state => setLocal(selector(state))), []);
