@@ -15,10 +15,10 @@ type ActionsInit<TState, TActions extends ActionPayloadMap<TActions>> = {
 }
 
 type StoreInit<
-    TState,
+    TState extends Exclude<any, Function>,
     TActions extends ActionPayloadMap<TActions>
 > = {
-    state : TState,
+    state : TState | (() => TState),
     actions: ActionsInit<TState, TActions>
 }
 
@@ -82,7 +82,7 @@ export function createStore<
         return () => subs.delete(key);
     }
 
-    let state : TState = init.state;
+    let state : TState = init.state instanceof Function ? init.state() : init.state;
     const get : TStore["get"] = () => state;
     const select : TStore["select"] = <R extends unknown>(selector : StateSelector<TState, R>) : R => selector(get())
     const set : TStore["set"] = op => {
