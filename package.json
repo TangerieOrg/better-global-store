@@ -1,0 +1,40 @@
+{
+  "name": "@tangerie/better-global-store",
+  "version": "0.0.2",
+  "description": "",
+  "source": "src/index.ts",
+  "exports": {
+    "types": "./lib/index.d.ts",
+    "require": "./lib/index.cjs",
+    "default": "./lib/index.modern.js"
+  },
+  "main": "./lib/index.cjs",
+  "module": "./lib/index.module.js",
+  "umd": "./lib/index.umd.js",
+  "types": "lib/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TangerieOrg/global-store.git"
+  },
+  "scripts": {
+    "build": "microbundle",
+    "build:watch": "microbundle --watch",
+    "prepare": "npm run build",
+    "version": "git add -A src",
+    "postversion": "git push && git push --tags"
+  },
+  "files": [
+    "lib/*"
+  ],
+  "author": "Tangerie <josh.cavill01@gmail.com> (https://github.com/Tangerie)",
+  "license": "ISC",
+  "devDependencies": {
+    "microbundle": "^0.15.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.3"
+  },
+  "dependencies": {
+    "immer": "^10.0.2",
+    "preact": "^10.15.1"
+  }
+}
