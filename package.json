@@ -4,9 +4,11 @@
   "description": "",
   "source": "src/index.ts",
   "exports": {
-    "types": "./lib/index.d.ts",
-    "require": "./lib/index.cjs",
-    "default": "./lib/index.modern.js"
+    ".": {
+      "types": "./lib/index.d.ts",
+      "require": "./lib/index.cjs",
+      "default": "./lib/index.modern.js"
+    }
   },
   "main": "./lib/index.cjs",
   "module": "./lib/index.module.js",
@@ -18,7 +20,8 @@
   },
   "scripts": {
     "build": "microbundle",
-    "build:watch": "microbundle --watch",
+    "watch": "microbundle watch",
+    "validate": "tsc --noEmit",
     "prepare": "npm run build",
     "version": "git add -A src",
     "postversion": "git push && git push --tags"

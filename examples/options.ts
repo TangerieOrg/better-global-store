@@ -1,5 +1,5 @@
 import { isEqual } from "lodash";
-import { createStore } from "../lib"
+import { createStore, useStore } from "../lib"
 
 
 interface MyState {
@@ -27,8 +27,10 @@ const store = createStore({
 
 // const mySelector : StateSelector = (state : MyState) => state.key;
 
-const { get, actions, use, emitter, useSelector, select } = store;
-useSelector(state => state.key)
+const { get, actions, select } = store;
+const { use } = useStore(store);
+const key = use(state => state.key)
+const state = use()
 
 get().key;
 
