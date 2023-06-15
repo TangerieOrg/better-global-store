@@ -1,6 +1,7 @@
 import { useEffect, useState } from "preact/hooks";
 import { produce, Draft, Immutable } from "immer";
 import { createEmitter } from "./emitter";
+import { merge } from "lodash";
 
 export type StoreAction<TState, TPayload extends unknown[]> = (state : Draft<TState>, ...payload : TPayload) => void;
 
@@ -39,21 +40,35 @@ type Store<
 }
 
 
+interface StoreOptions<TState> {
+    // Returns true if the states are equal
+    compare: (current : TState, next : TState) => boolean;
+}
 
-
+const getOptions = <TState>(options : Partial<StoreOptions<TState>>) => {
+    options = merge<StoreOptions<TState>, Partial<StoreOptions<TState>>>({
+        compare: (current, next) => current === next
+    }, options)
+    return options as StoreOptions<TState>;
+}
 
 export function createStore<
     TState,
     TActions extends ActionPayloadMap<TActions>
->(init : StoreInit<TState, TActions>) {
+>(init : StoreInit<TState, TActions>, _opts : Partial<StoreOptions<TState>> = {}) {
+    const options = getOptions(_opts);
     const emitter = createEmitter<TState>();
 
     let state : TState = init.state;
     const get = () => state;
     const select : Store<TState, TActions>["select"] = <R extends unknown>(selector : StateSelector<TState, R>) : R => selector(get())
     const set = (op : (d : Draft<TState>) => void) => {
-        state = produce<TState>(state, op);
-        emitter.emit(state);
+        const nextState = produce<TState>(state, op);
+        // state = produce<TState>(state, op);
+        if(!options.compare(state, nextState)) {
+            state = nextState;
+            emitter.emit(state);
+        }
     }
 
     // @ts-ignore
