@@ -1,4 +1,4 @@
-import { createStore, useStore } from "../src"
+import { createStore, createUseStore } from "../src"
 
 
 interface MyState {
@@ -25,7 +25,7 @@ const store = createStore({
 // const mySelector : StateSelector = (state : MyState) => state.key;
 
 const { get, actions, select } = store;
-const { use } = useStore(store);
+const use = createUseStore(store);
 const key = use(state => state.key);
 const state = use();
 select(state => state.key);

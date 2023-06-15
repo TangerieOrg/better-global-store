@@ -1,15 +1,12 @@
 import { useEffect, useState } from "preact/hooks";
 import { ActionPayloadMap, Store } from "./store";
 
-export interface StoreHooks<TState> {
-    use() : TState,
-    use<R>(selector : (state : TState) => R) : R
-}
 
-export function useStore<
+
+export function createUseStore<
     TState,
     TActions extends ActionPayloadMap<TActions>
->(store : Store<TState, TActions>) : StoreHooks<TState> {
+>(store : Store<TState, TActions>) {
     const { get, subscribe } = store;
 
     function use() : TState;
@@ -22,7 +19,5 @@ export function useStore<
         return local;
     }
 
-    return {
-        use
-    };
+    return use;
 }
