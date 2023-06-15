@@ -1,2 +1,2 @@
 # Global Store
-`npm i @tangerie/global-store`
+`npm i @tangerie/better-global-store`
