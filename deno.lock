@@ -1,0 +1,32 @@
+{
+  "version": "5",
+  "specifiers": {
+    "jsr:@ordo-pink/deep-equals@*": "0.1.0",
+    "jsr:@std/collections@^1.1.2": "1.1.2",
+    "npm:immer@^10.1.1": "10.1.1",
+    "npm:preact@^10.27.0": "10.27.0"
+  },
+  "jsr": {
+    "@ordo-pink/deep-equals@0.1.0": {
+      "integrity": "6be45f4593d4bb6820b6907b2b4ddebed33ae9f69c5c0c26ce1f2b00b9e4ab9b"
+    },
+    "@std/collections@1.1.2": {
+      "integrity": "f1685dd45c3ec27c39d0e8a642ccf810f391ec8a6cb5e7355926e6dacc64c43e"
+    }
+  },
+  "npm": {
+    "immer@10.1.1": {
+      "integrity": "sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw=="
+    },
+    "preact@10.27.0": {
+      "integrity": "sha512-/DTYoB6mwwgPytiqQTh/7SFRL98ZdiD8Sk8zIUVOxtwq4oWcwrcd1uno9fE/zZmUaUrFNYzbH14CPebOz9tZQw=="
+    }
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@std/collections@^1.1.2",
+      "npm:immer@^10.1.1",
+      "npm:preact@^10.27.0"
+    ]
+  }
+}

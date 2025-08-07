@@ -1,0 +1,25 @@
+{
+  "name": "@tangerie/global-store",
+  "version": "1.0.0",
+  "tasks": {
+    "dry": "deno publish --dry-run --allow-dirty",
+    "clean-docs": "deno eval \"await Deno.remove('./docs', { recursive: true }).catch(() => {})\"",
+    "docs": "deno task clean-docs && deno doc --html src/store.ts && python -m http.server -d ./docs -b localhost"
+  },
+  "license": "MIT",
+  "imports": {
+    "@std/collections": "jsr:@std/collections@^1.1.2",
+    "immer": "npm:immer@^10.1.1",
+    "preact": "npm:preact@^10.27.0"
+  },
+  "exports": {
+    ".": "./src/mod.ts",
+    "./hooks": "./src/hooks.ts"
+  },
+  "publish": {
+    "include": [
+      "src",
+      "README.md"
+    ]
+  }
+}

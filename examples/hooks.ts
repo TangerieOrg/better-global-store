@@ -1,15 +1,14 @@
 import { createStore } from "@tangerie/global-store"
 import { createUseStore } from "@tangerie/global-store/hooks";
 
-
 interface MyState {
     key : string;
 }
 
-const getInit = () : MyState => ({ key : "value" })
-
 const store = createStore({
-    state: getInit,
+    state: {
+        key: "value"
+    } as MyState,
     actions: {
         setKey: (state, key : string) => {
             state.key = key

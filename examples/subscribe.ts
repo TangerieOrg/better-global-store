@@ -38,29 +38,34 @@ const store = createStore({
 });
 
 
-const { get, actions, select, selector, set, subscribe } = store;
-
-const keySelector = selector((state : MyState) => state.key);
-const selectorWithArgs = selector((state : MyState, a : number) => String(state.other.length + a))
-
+const { get, actions, select, subscribe } = store;
 
 console.log("State", get())
 
-const key = keySelector();
-console.log("Key", key);
+const unsubscribe = subscribe(state => state.key, (key) => console.log("[Key Changed]", key));
 
-const other = select(state => state.other);
-console.log("Other", other);
+actions.setKey("abba");
+// [Key Changed] abba
 
-console.log("Args", selectorWithArgs(2));
+actions.setKey("abba");
+// Nothing because they are equal
+
+actions.setKey("abbab");
+// [Key Changed] abbab
+
+actions.addOther(1);
+// Nothing
+
+unsubscribe();
 
 actions.resetKey();
-console.log("Key", keySelector());
-actions.setKey("");
-console.log("Key", keySelector());
-actions.appendKey(0, "a", "b", "c");
-console.log("Key", keySelector());
+// Nothing because unsubscribed
 
-set(state => state.other = []);
+subscribe(state => console.log("[State Changed]", state));
+subscribe(state => state.other, other => console.log("[Other Changed]", other));
+subscribe(state => state.other.at(1), (cur, prev) => console.log(`[Other[1] Changed] From ${prev} to ${cur}`));
 
-console.log(select(state => state.other));
+actions.setKey("a");
+actions.resetOther();
+actions.setOther(0, 5);
+actions.addOther(2);
