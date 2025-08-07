@@ -1,6 +1,18 @@
 import { useEffect, useState } from "preact/hooks";
 import type { ActionPayloadMap, Store } from "./store.ts";
 
+/**
+ * 
+ * @example
+ * ```tsx
+ * const useStore = createUseStore(store);
+ * function Element() {
+ *     const key = useStore(state => state.key);
+ *     useEffect(() => console.log(key), [key]);
+ *     return <h1>{key}</h1>
+ * }
+ * ```
+ */
 export function createUseStore<
     TState,
     TActions extends ActionPayloadMap<TActions>
