@@ -1,4 +1,4 @@
-import { enableMapSet, produce, type Draft } from "immer";
+import { enableMapSet, type Draft, createDraft, finishDraft } from "immer";
 import { deepMerge } from "@std/collections/deep-merge";
 enableMapSet();
 
@@ -12,7 +12,7 @@ type SelectedEmitterCallback<TState, R> = [selector : StateSelector<TState, R>, 
 type EmitterUnsubscriber = () => void;
 
 export type Comparator<V = unknown> = (a : V, b : V) => boolean;
-export type StoreAction<TState, TPayload extends unknown[]> = (state : Draft<TState>, ...payload : TPayload) => void;
+export type StoreAction<TState, TPayload extends unknown[]> = (state : Draft<TState>, ...payload : TPayload) => void | Promise<void>;
 
 export type ActionPayloadMap<TActions> = {
     [K in keyof TActions]: unknown[]
@@ -30,14 +30,12 @@ type StoreInit<
     actions: ActionsInit<TState, TActions>
 }
 
+// Simplified StoreActions type that works correctly
 type StoreActions<TActions extends ActionPayloadMap<TActions>> = {
-    [K in keyof TActions]: (...payload : TActions[K]) => void;
+    [K in keyof TActions]: (...payload : TActions[K]) => void | Promise<void>;
 }
 
-
-
-
-export type StoreSetOperation<TState> = (d : Draft<TState>) => void;
+export type StoreSetOperation<TState> = (d : Draft<TState>) => void | Promise<void>;
 export type StoreSet<TState> = (op : StoreSetOperation<TState>) => void;
 
 /**
@@ -132,18 +130,6 @@ const getOptions = (options : Partial<StoreOptions>) => {
     return options as StoreOptions;
 }
 
-function applyActions<
-    TState,
-    TActions extends ActionPayloadMap<TActions>
->(initActions : ActionsInit<TState, TActions>, set : StoreSet<TState>) : StoreActions<TActions> {
-    const actions : Partial<StoreActions<TActions>> = {};
-    for(const key in initActions) {
-        const fullAction = initActions[key];
-        actions[key] = (...args) => set(draft => fullAction(draft, ...args));
-    }
-    return actions as StoreActions<TActions>;
-}
-
 /**
  * Creates a store from a set of actions and initial state
  * @example 
@@ -206,14 +192,64 @@ export function createStore<
     
     const select : TStore["select"] = <R>(selector : StateSelector<TState, R>) : R => selector(get())
     const set : TStore["set"] = op => {
-        const nextState = produce<TState>(state, (draft) => void op(draft));
-        if(!options.compare(state, nextState)) {
-            state = nextState;
-            emit(state);
+        // Create a draft for the operation
+        const draft = createDraft(state as any);
+        const result = op(draft as Draft<TState>);
+        
+        // Handle async operations
+        if (result instanceof Promise) {
+            result.then(() => {
+                const nextState = finishDraft(draft);
+                if (!options.compare(state, nextState)) {
+                    state = nextState as TState;
+                    emit(state);
+                }
+            });
+        } else {
+            // Handle sync operations
+            const nextState = finishDraft(draft);
+            if (!options.compare(state, nextState)) {
+                state = nextState as TState;
+                emit(state);
+            }
         }
     }
 
-    const actions = applyActions(init.actions, set);
+    function applyActions(initActions : ActionsInit<TState, TActions>) : StoreActions<TActions> {
+        const actions : Partial<StoreActions<TActions>> = {};
+        for(const key in initActions) {
+            const fullAction = initActions[key];
+            actions[key] = (...args) => {
+                // Create a draft for potential async operations
+                const draft = createDraft(state as any);
+                const result = fullAction(draft as Draft<TState>, ...args);
+                
+                // Handle async actions
+                if (result instanceof Promise) {
+                    return result.then(() => {
+                        const nextState = finishDraft(draft);
+                        // Update state with the new state
+                        if (!options.compare(state, nextState)) {
+                            state = nextState as TState;
+                            emit(state);
+                        }
+                    });
+                } else {
+                    // Handle sync actions
+                    const nextState = finishDraft(draft);
+                    // Update state with the new state
+                    if (!options.compare(state, nextState)) {
+                        state = nextState as TState;
+                        emit(state);
+                    }
+                    return result;
+                }
+            };
+        }
+        return actions as StoreActions<TActions>;
+    }
+
+    const actions = applyActions(init.actions);
 
     const store : TStore = {
         get,

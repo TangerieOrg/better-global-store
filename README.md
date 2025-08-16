@@ -4,6 +4,8 @@
 
 ## Example
 For more see `examples` directory.
+
+### Basic Usage
 ```ts
 import { createStore, StateSelector } from "@tangerie/global-store"
 
@@ -71,4 +73,64 @@ console.log("Key", keySelector());
 set(state => state.other = []);
 
 console.log(select(state => state.other));
+```
+
+### Async Actions
+The store now supports async actions that can perform asynchronous operations and then update the state:
+
+```ts
+import { createStore } from "@tangerie/global-store"
+
+interface User {
+  id: number;
+  name: string;
+}
+
+interface AppState {
+  users: User[];
+  loading: boolean;
+  error: string | null;
+}
+
+const store = createStore({
+  state: {
+    users: [],
+    loading: false,
+    error: null,
+  } as AppState,
+  actions: {
+    // Sync action example
+    addUser: (state, user: User) => {
+      state.users.push(user);
+    },
+    
+    // Async action example
+    async fetchUsers(state) {
+      state.loading = true;
+      state.error = null;
+      
+      try {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Update state with fetched users
+        const users: User[] = [
+          { id: 1, name: "Alice" },
+          { id: 2, name: "Bob" },
+          { id: 3, name: "Charlie" }
+        ];
+        state.users = users;
+      } catch (error) {
+        state.error = error.message || "Failed to fetch users";
+      } finally {
+        state.loading = false;
+      }
+    }
+  }
+});
+
+// Using async action
+store.actions.fetchUsers().then(() => {
+  console.log("Users fetched:", store.get());
+});
 ```

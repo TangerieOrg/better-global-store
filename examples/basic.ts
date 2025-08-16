@@ -33,6 +33,10 @@ const store = createStore({
             } else {
                 state.other[index] = num;
             }
+        },
+        async asyncFunction(state, num : number, ms : number) {
+            await new Promise(resolve => setTimeout(resolve, ms));
+            state.other.push(num);
         }
     }
 });
@@ -61,6 +65,8 @@ console.log("Key", keySelector());
 actions.appendKey(0, "a", "b", "c");
 console.log("Key", keySelector());
 
-set(state => state.other = []);
+set(state => { state.other = [] });
 
 console.log(select(state => state.other));
+await actions.asyncFunction(5, 1000);
+console.log(select(state => state.other))
