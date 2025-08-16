@@ -12,7 +12,7 @@ type SelectedEmitterCallback<TState, R> = [selector : StateSelector<TState, R>, 
 type EmitterUnsubscriber = () => void;
 
 export type Comparator<V = unknown> = (a : V, b : V) => boolean;
-export type StoreAction<TState, TPayload extends unknown[]> = (state : Draft<TState>, ...payload : TPayload) => void | Promise<void>;
+export type StoreAction<TState, TPayload extends unknown[]> = (state : TState, ...payload : TPayload) => void | Promise<void>;
 
 export type ActionPayloadMap<TActions> = {
     [K in keyof TActions]: unknown[]
@@ -222,7 +222,7 @@ export function createStore<
             actions[key] = (...args) => {
                 // Create a draft for potential async operations
                 const draft = createDraft(state as any);
-                const result = fullAction(draft as Draft<TState>, ...args);
+                const result = fullAction(draft, ...args);
                 
                 // Handle async actions
                 if (result instanceof Promise) {

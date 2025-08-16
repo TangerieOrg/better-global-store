@@ -1,6 +1,6 @@
 {
   "name": "@tangerie/global-store",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "tasks": {
     "dry": "deno publish --dry-run --allow-dirty",
     "clean-docs": "deno eval \"await Deno.remove('./docs', { recursive: true }).catch(() => {})\"",
@@ -13,7 +13,8 @@
   },
   "exports": {
     ".": "./src/mod.ts",
-    "./hooks": "./src/hooks.ts"
+    "./hooks": "./src/hooks.ts",
+    "./store": "./src/store.ts"
   },
   "publish": {
     "include": [
