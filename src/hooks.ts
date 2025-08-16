@@ -1,4 +1,4 @@
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useState } from "npm:preact@^10.27.0/hooks";
 import type { ActionPayloadMap, Store } from "./store.ts";
 
 /**
