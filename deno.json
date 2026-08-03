@@ -1,6 +1,6 @@
 {
   "name": "@tangerie/global-store",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "tasks": {
     "dry": "deno publish --dry-run --allow-dirty",
     "clean-docs": "deno eval \"await Deno.remove('./docs', { recursive: true }).catch(() => {})\"",
@@ -9,7 +9,8 @@
   "license": "MIT",
   "imports": {
     "@std/collections": "jsr:@std/collections@^1.1.2",
-    "immer": "npm:immer@^10.1.1"
+    "immer": "npm:immer@^10.1.1",
+    "preact": "npm:preact@*"
   },
   "exports": {
     ".": "./src/mod.ts",
