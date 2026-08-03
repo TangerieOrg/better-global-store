@@ -10,7 +10,7 @@
   "imports": {
     "@std/collections": "jsr:@std/collections@^1.1.2",
     "immer": "npm:immer@^10.1.1",
-    "preact": "npm:preact@*"
+    "preact": "npm:preact@^10.29.8"
   },
   "exports": {
     ".": "./src/mod.ts",
