@@ -24,7 +24,7 @@ export function createUseStore<
     function use(selector : (state : TState) => unknown = (state : TState) => state) {
         const [local, setLocal] = useState(selector(get()));
 
-        useEffect(() => subscribe(selector, v => setLocal(v)), []);
+        useEffect(() => subscribe(selector, v => setLocal(v)), [selector]);
 
         return local;
     }
