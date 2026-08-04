@@ -179,7 +179,10 @@ export function createStore<
         const key = Symbol();
         subs.set(key, [selector, cb]);
         prevValues.set(key, selector(get()));
-        return () => subs.delete(key);
+        return () => {
+            subs.delete(key);
+            prevValues.delete(key);
+        };
     }
 
     let state : TState = init.state instanceof Function ? init.state() : init.state;
